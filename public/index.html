@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeCampus - Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Section -->
+        <div id="login-section" class="admin-login-container">
+            <div class="admin-login-box">
+                <div class="admin-header">
+                    <span class="admin-icon">🏫</span>
+                    <h1 class="admin-title">SafeCampus</h1>
+                    <p class="admin-subtitle">Admin Dashboard</p>
+                </div>
+                <form id="login-form">
+                    <div class="admin-form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="admin@safecampus.com" required>
+                    </div>
+                    <div class="admin-form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="admin-btn">Sign In</button>
+                </form>
+                <div class="admin-footer">
+                    <p>Secure Admin Portal • Protected Access</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="dashboard" style="display: none;">
+            <!-- Sidebar Navigation -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>SafeCampus</h2>
+                    <button id="toggle-sidebar" class="btn-toggle">☰</button>
+                </div>
+                <nav class="nav-menu">
+                    <a href="#" class="nav-item active" data-section="dashboard">
+                        <span class="icon">📊</span>
+                        <span class="label">Dashboard</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="users">
+                        <span class="icon">👥</span>
+                        <span class="label">Users</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="reports">
+                        <span class="icon">📋</span>
+                        <span class="label">Reports</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="locations">
+                        <span class="icon">📍</span>
+                        <span class="label">Locations</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="notifications" data-admin-only="true">
+                        <span class="icon">📰</span>
+                        <span class="label">News</span>
+                    </a>
+                    <a href="#" class="nav-item" data-section="audit" data-admin-only="true">
+                        <span class="icon">📝</span>
+                        <span class="label">Audit Log</span>
+                    </a>
+
+                </nav>
+                <div class="sidebar-footer">
+                    <button id="logout-btn" class="btn btn-secondary btn-block">Logout</button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <!-- Top Bar -->
+                <div class="top-bar">
+                    <div class="breadcrumb">
+                        <span style="opacity: 0.5; font-size: 0.8rem;">🏠</span>
+                        <span style="opacity: 0.3; margin: 0 4px;">/</span>
+                        <span id="breadcrumb-text">Dashboard</span>
+                    </div>
+                    <div class="user-menu" id="user-menu-trigger">
+                        <button id="user-menu-btn" class="btn-icon">👤</button>
+                        
+                        <div class="user-dropdown" id="user-dropdown">
+                            <div class="dropdown-header">
+                                <p id="dropdown-user-name">Mr. Lee</p>
+                                <span id="dropdown-user-role" class="badge badge-purple">admin</span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <button id="dropdown-logout-btn" class="dropdown-item">
+                                <span class="icon">🚪</span> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Area -->
+                <div class="content">
+                    <!-- Dashboard View -->
+                    <section id="dashboard-view" class="view active">
+                        <h1>Dashboard Overview</h1>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">👥</div>
+                                <div class="stat-content">
+                                    <h3>Total Users</h3>
+                                    <p class="stat-value" id="stat-users">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📍</div>
+                                <div class="stat-content">
+                                    <h3>Total Locations</h3>
+                                    <p class="stat-value" id="stat-locations">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📋</div>
+                                <div class="stat-content">
+                                    <h3>Total Reports Today</h3>
+                                    <p class="stat-value" id="stat-reports-today">0</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">⚠️</div>
+                                <div class="stat-content">
+                                    <h3>Unresolved Incidents</h3>
+                                    <p class="stat-value" id="stat-unresolved">0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="charts-section">
+                            <div class="chart-container">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                    <h2>Recent Activity</h2>
+                                    <div class="bulk-actions" id="activity-bulk-actions" style="display: none;">
+                                        <button onclick="deleteSelectedActivities()" class="btn btn-sm btn-danger">🗑️ Delete Selected</button>
+                                    </div>
+                                </div>
+                                <div style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px;">
+                                    <input type="checkbox" id="select-all-activities" onclick="toggleAllActivities(this)">
+                                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--secondary);">Select All</span>
+                                </div>
+                                <div id="activity-list" class="activity-list">
+                                    <p class="text-muted">Loading activity...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Users Management View -->
+                    <section id="users-view" class="view">
+                        <div class="view-header">
+                            <h1>User Management</h1>
+                            <button id="add-user-btn" class="btn btn-primary">+ Add User</button>
+                        </div>
+
+                        <div class="filters">
+                            <input type="text" id="search-users" placeholder="Search users..." class="input-search">
+                            <select id="filter-role" class="select-filter">
+                                <option value="">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                            </select>
+
+                        </div>
+
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">Loading users...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Locations Management View -->
+                    <section id="locations-view" class="view">
+                        <div class="view-header">
+                            <h1>Campus Locations</h1>
+                            <button id="add-location-btn" class="btn btn-primary">+ Add Location</button>
+                        </div>
+
+                        <div class="filters">
+                            <input type="text" id="search-locations" placeholder="Search locations..." class="input-search">
+                            <select id="filter-location-type" class="select-filter">
+                                <option value="">All Types</option>
+                                <option value="security">Security</option>
+                                <option value="medical">Medical</option>
+                                <option value="emergency">Emergency</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Type</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                        <th>GPS</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="locations-table-body">
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">Loading locations...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Reports View -->
+                    <section id="reports-view" class="view">
+                        <h1>Live Incident Reports</h1>
+                        <div class="incidents-controls">
+
+                            <select id="incident-type-filter" class="select-filter">
+                                <option value="">All Types</option>
+                                <option value="Accident">Accident</option>
+                                <option value="Crime">Crime</option>
+                                <option value="Damaged Facilities">Damaged Facilities</option>
+                                <option value="Suspicious Activity">Suspicious Activity</option>
+                                <option value="Fire Hazard">Fire Hazard</option>
+                                <option value="Others">Others</option>
+                            </select>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Date/Time</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                        <th>Location</th>
+                                        <th>GPS</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="incidents-table-body">
+                                    <tr>
+                                        <td colspan="8" class="text-center text-muted">Loading incidents...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- News/Notifications View -->
+                    <section id="notifications-view" class="view">
+                        <h1>Send News to Users</h1>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h2>Publish News</h2>
+                            </div>
+                            <div class="card-body">
+                                <form id="notification-form">
+                                    <div class="form-group">
+                                        <label for="notification-title">News Title</label>
+                                        <input type="text" id="notification-title" placeholder="Enter news title" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="notification-message">News Content</label>
+                                        <textarea id="notification-message" placeholder="Enter news content" rows="5" required></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="notification-type">Category</label>
+                                        <select id="notification-type" required>
+                                            <option value="news">News</option>
+                                            <option value="alert">Alert</option>
+                                            <option value="announcement">Announcement</option>
+                                            <option value="emergency">Emergency</option>
+                                            <option value="event">Event</option>
+                                            <option value="update">Update</option>
+                                            <option value="maintenance">Maintenance</option>
+                                            <option value="safety">Safety</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">Publish News</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="card" style="margin-top: 30px;">
+                            <div class="card-header">
+                                <h2>Published News</h2>
+                            </div>
+                            <div class="card-body">
+                                <div id="notifications-list"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Audit Log View -->
+
+                    <!-- Audit Log View -->
+                    <section id="audit-view" class="view">
+                        <h1>Activity Audit Log</h1>
+                        
+                        <div class="card">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <h2>System Activity</h2>
+                                <div class="bulk-actions">
+                                    <button onclick="exportAuditLogToCSV()" class="btn btn-sm" style="background-color: #10b981; color: white;">📥 Export CSV</button>
+                                    <button id="btn-delete-logs" onclick="deleteSelectedLogs()" class="btn btn-sm btn-danger" style="display: none;">🗑️ Delete Selected</button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="audit-log-container">
+                                    <table class="audit-table" style="width: 100%; border-collapse: collapse;">
+                                        <thead>
+                                            <tr style="background-color: #f3f4f6; border-bottom: 2px solid #e5e7eb;">
+                                                <th style="padding: 12px; width: 40px;"><input type="checkbox" id="select-all-logs" onclick="toggleAllLogs(this)"></th>
+                                                <th style="padding: 12px; text-align: left;">Action</th>
+                                                <th style="padding: 12px; text-align: left;">Action By</th>
+                                                <th style="padding: 12px; text-align: left;">Timestamp</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="audit-log-body">
+                                            <tr>
+                                                <td colspan="4" style="padding: 20px; text-align: center; color: #999;">Loading audit log...</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="user-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Add User</h2>
+                <button class="btn-close" onclick="closeModal('user-modal')">&times;</button>
+            </div>
+            <form id="user-form">
+                <div class="form-group">
+                    <label for="modal-name">Full Name</label>
+                    <input type="text" id="modal-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-email">Email</label>
+                    <input type="email" id="modal-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-role">Role</label>
+                    <select id="modal-role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('user-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Location Modal -->
+    <div id="location-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="location-modal-title">Add Location</h2>
+                <button class="btn-close" onclick="closeModal('location-modal')">&times;</button>
+            </div>
+            <form id="location-form">
+                <div class="form-group">
+                    <label for="location-name">Location Name</label>
+                    <input type="text" id="location-name" required placeholder="e.g. Security Post A">
+                </div>
+                <div class="form-group">
+                    <label for="location-type">Type</label>
+                    <select id="location-type">
+                        <option value="security">Security</option>
+                        <option value="medical">Medical</option>
+                        <option value="emergency">Emergency</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="location-lat">Latitude</label>
+                    <input type="number" id="location-lat" step="any" required placeholder="e.g. 1.234567">
+                </div>
+                <div class="form-group">
+                    <label for="location-long">Longitude</label>
+                    <input type="number" id="location-long" step="any" required placeholder="e.g. 103.123456">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('location-modal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Location</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Incident Status Modal -->
+    <div id="incident-status-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>Update Incident Status</h2>
+                <button class="btn-close" onclick="closeModal('incident-status-modal')">&times;</button>
+            </div>
+            <div class="form-group" style="padding: 20px;">
+                <label for="incident-status-select">Status</label>
+                <select id="incident-status-select" style="width: 100%;">
+                    <option value="pending">📝 Pending</option>
+                    <option value="ongoing">🔴 Ongoing</option>
+                    <option value="resolved">✅ Resolved</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('incident-status-modal')">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveIncidentStatus()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Detail Modal -->
+    <div id="report-detail-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Incident Report Details</h2>
+                <button class="btn-close" onclick="closeModal('report-detail-modal')">&times;</button>
+            </div>
+            <div id="report-detail-content" style="padding: 20px;">
+                <!-- Details will be injected here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeModal('report-detail-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Firebase SDK v9+ with compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
